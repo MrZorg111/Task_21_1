@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdlib>
 #include <vector>
 
 struct data_base{
@@ -10,60 +9,68 @@ struct data_base{
     std::string date = " ";
     std::string sum = " ";
 };
+bool test () {
+    char tempo;
+    std::ifstream checking;
+    checking.open("P:\\Meaning.txt");
+    checking >> tempo;
+    checking.close();
+    if (tempo == '\0') {
+        return false;
+    }
+    return true;
+}
+
 int main() {
     std::vector<data_base> meaning;
+    meaning.push_back(data_base());
+    std::string date_name[4] {"Name", "Surname", "Date", "Sum"};
     std::string command, word, answer = "yes";
     do {
-        std::cout << "Enter command: (add/list) ";
+        std::cout << "Enter command: (add/list)";
         std::cin >> command;
         if (command == "add") {
-            std::ofstream write;
-            for (int i = 0; answer == "yes"; i++) {
-                meaning.push_back(data_base());
-                std::cout << "Enter name: " << "\n";
+            std::ofstream book;
+            book.open("P:\\Meaning.txt");
+            book << "";
+            int b = 0;
+            while (answer == "yes") {
+                std::cout << "Enter " << date_name[b];
                 std::cin >> word;
-                meaning[i].name = word;
-                std::cout << "Enter surname: " << "\n";
-                std::cin >> word;
-                meaning[i].surname = word;
-                std::cout << "Enter date: " << "\n";
-                std::cin >> word;
-                meaning[i].date = word;
-                std::cout << "Enter sum: " << "\n";
-                std::cin >> word;
-                meaning[i].sum = word;
-                std::cout << "Continue the program? (yes/no) ";
-                std::cin >> answer;
+                book << word << " ";
+                b++;
+                if (b > 0 && b % 4 == 0) {
+                    book << "\n";
+                    std::cout << "Do you want to continue entering data? (yes/no)";
+                    std::cin >> answer;
+                    b = 0;
+                }
             }
-            write.open("P:\\Meaning.txt");
-            for (int w = 0; w < meaning.size(); w++) {
-                write << meaning[w].name << "\t" << meaning[w].surname << "\t" << meaning[w].date << "\t"
-                      << meaning[w].sum << "\n";
-            }
-            write.close();
+            book.close();
         }
         else if (command == "list") {
-            std::fstream read;
-            std::string tempo = " ";
-            int count = 0;
-            read.open("P:\\Meaning.txt");
-            if (!read.eof()) {
-                read >> tempo;
-                count++;
-                std::cout << tempo << " ";
-                if (count % 4 == 0) {
-                    std::cout << "\n";
+            std::ifstream load;
+            load.open("P:\\Meaning.txt");
+            if (!test()) {
+                std::cout << "The file is empty, enter the data!";
+            }
+            else {
+                for (int count = 0; !load.eof(); count++) {
+                    meaning.push_back(data_base());
+                    load >> meaning[count].name >> meaning[count].surname >> meaning[count].date >> meaning[count].sum;
                 }
-                read.close();
             }
-                else {
-                std::cout << "The list is empty, enter the data. \n";
+            load.close();
+            for (int r = 0; r < meaning.size(); r++) {
+                std::cout << meaning[r].name << " " << meaning[r].surname << " " << meaning[r].date << " " << meaning[r].sum << "\n";
             }
+
+
         }
         else {
             std::cout << "Command error!";
         }
-        std::cout << "Continue the program? (yes/no) ";
+        std::cout << "Continue the program? (yes/no)";
         std::cin >> answer;
     } while (answer == "yes");
 }
